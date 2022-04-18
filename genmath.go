@@ -240,3 +240,16 @@ func ZeroOrVal[C Bool, T Real](condition C, val T) T {
 	}
 	return T(0)
 }
+
+func Lerp[T Real](start T, end T, amount float64) T {
+	diff := end - start
+	lerp := float64(diff) * amount
+	return start + T(lerp)
+}
+
+func Range[T Real](start T, end T, val T) float64 {
+	diff := end - start
+	lerp := val - start
+	percent := float64(lerp) / float64(diff)
+	return percent
+}
