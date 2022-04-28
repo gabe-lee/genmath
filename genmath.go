@@ -22,6 +22,23 @@ const (
 	SQRT_PHI = 1.27201964951406896425242246173749149171560804184009624861664038 // Square root of Phi (golden ratio)
 	SQRT_PI  = 1.77245385090551602729816748334114518279754945612238712821380779 // Square root of Pi
 	SQRT_TAU = 2.50662827463100050241576528481104525300698674060993831662992358 // Square root of Tau
+
+	MAX_U8    = math.MaxUint8
+	MAX_I8    = math.MaxInt8
+	MIN_I8    = math.MinInt8
+	MAX_U16   = math.MaxUint16
+	MAX_I16   = math.MaxInt16
+	MIN_I16   = math.MinInt16
+	MAX_U32   = math.MaxUint32
+	MAX_I32   = math.MaxInt32
+	MIN_I32   = math.MinInt32
+	MAX_U64   = math.MaxUint64
+	MAX_I64   = math.MaxInt64
+	MIN_I64   = math.MinInt64
+	MAX_F32   = math.MaxFloat32
+	SMALL_F32 = math.SmallestNonzeroFloat32
+	MAX_F64   = math.MaxFloat64
+	SMALL_F64 = math.SmallestNonzeroFloat64
 )
 
 type Integer interface {
@@ -41,7 +58,7 @@ type Unsigned interface {
 }
 
 type Signed interface {
-	~int | ~int8 | ~int16 | ~int32 | ~int64 | ~float32 | ~float64 | ~complex64 | ~complex128
+	~int | ~int8 | ~int16 | ~int32 | ~int64 | ~float32 | ~float64
 }
 
 type Real interface {
