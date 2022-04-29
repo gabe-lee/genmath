@@ -270,3 +270,20 @@ func Range[T Real](start T, end T, val T) float64 {
 	percent := float64(lerp) / float64(diff)
 	return percent
 }
+
+func FIntFrac[T Float](value T) (T, T) {
+	i, f := math.Modf(float64(value))
+	return T(i), T(f)
+}
+
+func FWholeRem[T Float](value T, mod T) (T, T) {
+	scale := value / mod
+	whole, rem := FIntFrac(scale)
+	return T(whole) * mod, T(rem) * mod
+}
+
+func IWholeRem[T Integer](value T, mod T) (T, T) {
+	whole := value / mod
+	rem := value - whole
+	return whole, rem
+}
