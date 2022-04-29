@@ -5,8 +5,6 @@ import (
 )
 
 const (
-	DEG2RAD  = 0.01745329251994329576923690768488612713442871888541725456097191 // Tau / 360
-	RAD2DEG  = 57.2957795130823208767981548141051703324054724665643215491602439 // 360 / Tau
 	PI       = 3.14159265358979323846264338327950288419716939937510582097494459 // Circumference / Diameter
 	TAU      = 6.28318530717958647692528676655900576839433879875021164194988918 // 2 * Pi
 	E        = 2.71828182845904523536028747135266249775724709369995957496696763 // Euler's constant (e)
@@ -23,22 +21,31 @@ const (
 	SQRT_PI  = 1.77245385090551602729816748334114518279754945612238712821380779 // Square root of Pi
 	SQRT_TAU = 2.50662827463100050241576528481104525300698674060993831662992358 // Square root of Tau
 
-	MAX_U8    = math.MaxUint8
-	MAX_I8    = math.MaxInt8
-	MIN_I8    = math.MinInt8
-	MAX_U16   = math.MaxUint16
-	MAX_I16   = math.MaxInt16
-	MIN_I16   = math.MinInt16
-	MAX_U32   = math.MaxUint32
-	MAX_I32   = math.MaxInt32
-	MIN_I32   = math.MinInt32
-	MAX_U64   = math.MaxUint64
-	MAX_I64   = math.MaxInt64
-	MIN_I64   = math.MinInt64
-	MAX_F32   = math.MaxFloat32
-	SMALL_F32 = math.SmallestNonzeroFloat32
-	MAX_F64   = math.MaxFloat64
-	SMALL_F64 = math.SmallestNonzeroFloat64
+	WORD_BITS  = 32 << (^uint(0) >> 63)
+	WORD_BYTES = WORD_BITS / 8
+	PTR_BITS   = 32 << (^uintptr(0) >> 63)
+	PTR_BYTES  = PTR_BITS / 8
+
+	MAX_UINT    = math.MaxUint
+	MAX_UINTPTR = 1<<PTR_BITS - 1
+	MAX_INT     = math.MaxInt
+	MIN_INT     = math.MinInt
+	MAX_U8      = math.MaxUint8
+	MAX_I8      = math.MaxInt8
+	MIN_I8      = math.MinInt8
+	MAX_U16     = math.MaxUint16
+	MAX_I16     = math.MaxInt16
+	MIN_I16     = math.MinInt16
+	MAX_U32     = math.MaxUint32
+	MAX_I32     = math.MaxInt32
+	MIN_I32     = math.MinInt32
+	MAX_U64     = math.MaxUint64
+	MAX_I64     = math.MaxInt64
+	MIN_I64     = math.MinInt64
+	MAX_F32     = math.MaxFloat32
+	SMALL_F32   = math.SmallestNonzeroFloat32
+	MAX_F64     = math.MaxFloat64
+	SMALL_F64   = math.SmallestNonzeroFloat64
 )
 
 type Integer interface {
@@ -57,12 +64,28 @@ type Unsigned interface {
 	~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr
 }
 
+type UnsignedInteger interface {
+	Unsigned
+}
+
 type Signed interface {
 	~int | ~int8 | ~int16 | ~int32 | ~int64 | ~float32 | ~float64
 }
 
+type SignedInteger interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64
+}
+
 type Real interface {
 	Integer | Float
+}
+
+type SignedReal interface {
+	SignedInteger | Float
+}
+
+type UnsignedReal interface {
+	UnsignedInteger
 }
 
 type Number interface {
@@ -144,6 +167,14 @@ func Pow[T Real](val, exp T) T {
 	return T(fPow)
 }
 
+func Square[T Real](val T) T {
+	return val * val
+}
+
+func Cube[T Real](val T) T {
+	return val * val * val
+}
+
 func Root[T Real](val, root T) T {
 	return Pow(val, 1/root)
 }
@@ -191,19 +222,19 @@ func ATan[T Real](tan T) T {
 }
 
 func CosDeg[T Real](degrees T) T {
-	fVal := float64(degrees) * DEG2RAD
+	fVal := float64(degrees) * DEG_TO_RAD
 	fCos := math.Cos(fVal)
 	return T(fCos)
 }
 
 func SinDeg[T Real](degrees T) T {
-	fVal := float64(degrees) * DEG2RAD
+	fVal := float64(degrees) * DEG_TO_RAD
 	fSin := math.Sin(fVal)
 	return T(fSin)
 }
 
 func TanDeg[T Real](degrees T) T {
-	fVal := float64(degrees) * DEG2RAD
+	fVal := float64(degrees) * DEG_TO_RAD
 	fTan := math.Tan(fVal)
 	return T(fTan)
 }
@@ -211,19 +242,19 @@ func TanDeg[T Real](degrees T) T {
 func ACosDeg[T Real](cos T) T {
 	fVal := float64(cos)
 	fRad := math.Acos(fVal)
-	return T(fRad * RAD2DEG)
+	return T(fRad * RAD_TO_DEG)
 }
 
 func ASinDeg[T Real](sin T) T {
 	fVal := float64(sin)
 	fRad := math.Asin(fVal)
-	return T(fRad * RAD2DEG)
+	return T(fRad * RAD_TO_DEG)
 }
 
 func ATanDeg[T Real](tan T) T {
 	fVal := float64(tan)
 	fRad := math.Atan(fVal)
-	return T(fRad * RAD2DEG)
+	return T(fRad * RAD_TO_DEG)
 }
 
 func Sign[T Real](val T) T {
@@ -286,4 +317,34 @@ func IWholeRem[T Integer](value T, mod T) (T, T) {
 	whole := value / mod
 	rem := value - whole
 	return whole, rem
+}
+
+func QuickDerivative[T Real](at T, resolution T, formula func(x T) T) T {
+	xHi, xLo := at+resolution, at-resolution
+	yHi, yLo := formula(xHi), formula(xLo)
+	slope := (yHi - yLo) / (xHi / xLo)
+	return slope
+}
+
+func QuickIntegral[T Real](from T, to T, resolution T, formula func(x T) T) T {
+	if from > to {
+		from, to = to, from
+	}
+	sum := T(0)
+	xLo := from
+	done := false
+	var yHi, yLo, xHi, aLo, aHi T
+	for !done {
+		xHi = xLo + resolution
+		if xHi >= to {
+			xHi = to
+			done = true
+		}
+		yHi, yLo = formula(xHi), formula(xLo)
+		aLo = resolution * yLo
+		aHi = resolution * yHi
+		sum += (aLo + aHi) / 2
+		xLo = xHi
+	}
+	return sum
 }
