@@ -80,6 +80,10 @@ type Real interface {
 	Integer | Float
 }
 
+type UnsignedOrFloat interface {
+	Unsigned | Float
+}
+
 type SignedReal interface {
 	SignedInteger | Float
 }
