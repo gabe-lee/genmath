@@ -306,6 +306,10 @@ func Range[T Real](start T, end T, val T) float64 {
 	return percent
 }
 
+func RoundClamp[T Real](min, val, max T) T {
+	return Clamp(min, Round(val), max)
+}
+
 func FIntFrac[T Float](value T) (T, T) {
 	i, f := math.Modf(float64(value))
 	return T(i), T(f)
@@ -351,4 +355,28 @@ func QuickIntegral[T Real](from T, to T, resolution T, formula func(x T) T) T {
 		xLo = xHi
 	}
 	return sum
+}
+
+func NaN32() float32 {
+	return T(math.Float32frombits(0x7FC00001))
+}
+
+func PInf32() float32 {
+	return T(math.Float32frombits(0x7F800000))
+}
+
+func NInf32() float32 {
+	return T(math.Float32frombits(0xFF800000))
+}
+
+func NaN64() float32 {
+	return T(math.Float64frombits(0x7FF8000000000001))
+}
+
+func PInf64() float32 {
+	return T(math.Float64frombits(0x7FF0000000000000))
+}
+
+func NInf64() float32 {
+	return T(math.Float64frombits(0xFFF0000000000000))
 }
