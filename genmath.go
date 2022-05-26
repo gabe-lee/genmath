@@ -2,6 +2,7 @@ package genmath
 
 import (
 	"math"
+	"unsafe"
 )
 
 const (
@@ -392,4 +393,30 @@ func PInf64() float64 {
 }
 func NInf64() float64 {
 	return math.Float64frombits(0xFFF0000000000000)
+}
+
+func UtoF32(u uint32) float32 {
+	return *(*float32)(unsafe.Pointer(&u))
+}
+func ItoF32(i int32) float32 {
+	return *(*float32)(unsafe.Pointer(&i))
+}
+func FtoI32(f float32) int32 {
+	return *(*int32)(unsafe.Pointer(&f))
+}
+func FtoU32(f float32) uint32 {
+	return *(*uint32)(unsafe.Pointer(&f))
+}
+
+func UtoF64(u uint64) float64 {
+	return *(*float64)(unsafe.Pointer(&u))
+}
+func ItoF64(i int64) float64 {
+	return *(*float64)(unsafe.Pointer(&i))
+}
+func FtoI64(f float64) int64 {
+	return *(*int64)(unsafe.Pointer(&f))
+}
+func FtoU64(f float64) uint64 {
+	return *(*uint64)(unsafe.Pointer(&f))
 }
