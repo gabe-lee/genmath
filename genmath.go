@@ -46,12 +46,7 @@ const (
 	SMALL_F32   = math.SmallestNonzeroFloat32
 	MAX_F64     = math.MaxFloat64
 	SMALL_F64   = math.SmallestNonzeroFloat64
-
-	one  = 1
-	zero = 0
 )
-
-var INF_F32 = 1 / float32(zero)
 
 type Integer interface {
 	~uint | ~int | ~uint8 | ~int8 | ~uint16 | ~int16 | ~uint32 | ~int32 | ~uint64 | ~int64 | ~uintptr
