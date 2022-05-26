@@ -357,26 +357,13 @@ func QuickIntegral[T Real](from T, to T, resolution T, formula func(x T) T) T {
 	return sum
 }
 
-func NaN32() float32 {
-	return T(math.Float32frombits(0x7FC00001))
+func RangesOverlap[T Real](startA, endA, startB, endB T) bool {
+	return startA <= endB && startB <= endA
 }
 
-func PInf32() float32 {
-	return T(math.Float32frombits(0x7F800000))
-}
-
-func NInf32() float32 {
-	return T(math.Float32frombits(0xFF800000))
-}
-
-func NaN64() float32 {
-	return T(math.Float64frombits(0x7FF8000000000001))
-}
-
-func PInf64() float32 {
-	return T(math.Float64frombits(0x7FF0000000000000))
-}
-
-func NInf64() float32 {
-	return T(math.Float64frombits(0xFFF0000000000000))
+func CombineRangesIfOverlap[T Real](startA, endA, startB, endB T) (overlap bool, start T, end T) {
+	if !RangesOverlap(startA, endA, startB, endB) {
+		return false, 0, 0
+	}
+	return true, Min(startA, startB), Max(endA, endB)
 }
