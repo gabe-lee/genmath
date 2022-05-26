@@ -46,7 +46,12 @@ const (
 	SMALL_F32   = math.SmallestNonzeroFloat32
 	MAX_F64     = math.MaxFloat64
 	SMALL_F64   = math.SmallestNonzeroFloat64
+
+	one  = 1
+	zero = 0
 )
+
+var INF_F32 = 1 / float32(zero)
 
 type Integer interface {
 	~uint | ~int | ~uint8 | ~int8 | ~uint16 | ~int16 | ~uint32 | ~int32 | ~uint64 | ~int64 | ~uintptr
@@ -366,4 +371,30 @@ func CombineRangesIfOverlap[T Real](startA, endA, startB, endB T) (overlap bool,
 		return false, 0, 0
 	}
 	return true, Min(startA, startB), Max(endA, endB)
+}
+
+func QNaN32() float32 {
+	return math.Float32frombits(0xFFC00001)
+}
+func SNaN32() float32 {
+	return math.Float32frombits(0xFF800001)
+}
+func PInf32() float32 {
+	return math.Float32frombits(0x7F800000)
+}
+func NInf32() float32 {
+	return math.Float32frombits(0xFF800000)
+}
+
+func SNaN64() float64 {
+	return math.Float64frombits(0x7FF0000000000001)
+}
+func QNaN64() float64 {
+	return math.Float64frombits(0x7FF8000000000001)
+}
+func PInf64() float64 {
+	return math.Float64frombits(0x7FF0000000000000)
+}
+func NInf64() float64 {
+	return math.Float64frombits(0xFFF0000000000000)
 }
